@@ -1,4 +1,4 @@
-﻿open FSharpKoans
+open FSharpKoans
 open FSharpKoans.Core
 
 let runner = KoanRunner()

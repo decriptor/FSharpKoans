@@ -1,5 +1,6 @@
-﻿namespace FSharpKoans
+namespace FSharpKoans
 open FSharpKoans.Core
+open System.Collections.Generic
 
 //---------------------------------------------------------------
 // Apply Your Knowledge!
@@ -59,7 +60,79 @@ module ``about the stock example`` =
     // using the F# Interactive window to check your progress.
 
     [<Koan>]
+    let YouGetASplitList() =
+        let splitCommas (x:string) =
+            x.Split([|','|])
+
+        let allVariances = new List<string[]>()
+        for i = 1 to stockData.Length - 1 do
+            allVariances.Add(splitCommas stockData.[i])
+
+        AssertEquality allVariances.Count 23
+
+    [<Koan>]
+    let YouGetASplitDictionaryOfHighLows() =
+        let splitCommas (x:string) =
+            x.Split([|','|])
+
+        let allVariances = new Dictionary<string, double>()
+        for i = 1 to stockData.Length - 1 do
+            let splits = splitCommas stockData.[i]
+            allVariances.[splits.[0]] <- System.Math.Abs(System.Double.Parse(splits.[4]) - System.Double.Parse(splits.[1]))
+
+        AssertEquality allVariances.Count 23
+
+    [<Koan>]
+    let GetTheVarianceMax() =
+        let splitCommas (x:string) =
+            x.Split([|','|])
+
+        let allVariances = new Dictionary<string, double>()
+        for i = 1 to stockData.Length - 1 do
+            let splits = splitCommas stockData.[i]
+            allVariances.[splits.[0]] <- System.Math.Abs(System.Double.Parse(splits.[4]) - System.Double.Parse(splits.[1]))
+
+        let max = Seq.max allVariances.Values
+        let result = System.Math.Round (max, 2)
+
+        AssertEquality result 0.43
+
+
+
+
+
+    let splitOnCommas (dataAsString:string) =
+        dataAsString.Split([|','|])
+
+    let createPriceDifferenceTuple (fullList:string[]) =
+        ( fullList.[0], abs (System.Double.Parse(fullList.[1]) - System.Double.Parse(fullList.[4])) )
+
+
+    let maximumDifferenceTuple =
+        // split strings into arrays, ignoring header
+        List.map splitOnCommas stockData.Tail
+        // map arrays to tuples
+        |> List.map createPriceDifferenceTuple
+        // get maximum tuple based on second element (price difference)
+        |> List.maxBy snd
+
+    [<Koan>]
+    let YouGotTheAnswerCorrectMine() =
+        let splitCommas (x:string) =
+            x.Split([|','|])
+
+        let allVariances = new Dictionary<double, string>()
+        for i = 1 to stockData.Length - 1 do
+            let splits = splitCommas stockData.[i]
+            allVariances.[System.Math.Abs(System.Double.Parse(splits.[4]) - System.Double.Parse(splits.[1]))] <- splits.[0]
+
+        let max = Seq.max allVariances.Keys
+        let result = allVariances.[max]
+
+        AssertEquality "2012-03-13" result
+
+    [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =  __
-        
+        let result = fst maximumDifferenceTuple
+
         AssertEquality "2012-03-13" result
